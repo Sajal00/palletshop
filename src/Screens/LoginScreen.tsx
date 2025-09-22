@@ -6,12 +6,19 @@ import { RootStackParamList } from '../Navigator/AppNavigator';
 import CustomTextInput from '../Components/CustomTextInput/CustomTextInput';
 import { FontSize } from '../Constant/FontSize';
 
+//hooks
+import useGoogleSignIn from '../Hooks/GoogleLogin/useGoogleLoginHook';
+
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = () => {
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
+    const { userInfo, loading, error, signInWithGoogle } = useGoogleSignIn();
+
 
     return (
 
@@ -25,7 +32,7 @@ const LoginScreen: React.FC<Props> = () => {
             >
                 <View style={styles.container}>
                     <View style={styles.card}>
-                        <CustomTextInput
+                        {/* <CustomTextInput
                             label="Email"
                             style={styles.input}
 
@@ -42,12 +49,12 @@ const LoginScreen: React.FC<Props> = () => {
 
                             keyboardType="phone-pad"
                             maxLength={10}
-                        />
+                        /> */}
                     </View>
 
                     <Text>Sign In With Google</Text>
-                    <TouchableOpacity>
-                        <Text>Google</Text>
+                    <TouchableOpacity onPress={signInWithGoogle}>
+                        <Text>{loading ? 'Signing in...' : 'Google'}</Text>
                     </TouchableOpacity>
 
                 </View>

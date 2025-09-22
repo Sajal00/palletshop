@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1069427504396",
+    "project_id": "palletshop-e4357",
+    "storage_bucket": "palletshop-e4357.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069427504396:android:6a465f53657d44ff694529",
+        "android_client_info": {
+          "package_name": "com.palletshop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1bjoZdDMKE6Zjc0lL1XMK9LaQSk-Rw5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

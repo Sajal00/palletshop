@@ -7,7 +7,7 @@ import { setUserInfo } from '../../Redux/Slice/userSlice'; // Redux action creat
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT_ID,
-  offlineAccess: true,
+ 
 });
 
 export default function useGoogleSignIn() {

@@ -1,4 +1,4 @@
-import { BASE_URL } from '@env';
+const BASE_URL=`https://catalog-management-system-dev-ak3ogf6zea-uc.a.run.app/cms/product/v2/filter/product`
 
 export interface FetchProductsParams {
   page: number | string;
@@ -9,7 +9,7 @@ export interface FetchProductsParams {
 }
 
 export interface FetchProductsResponse {
-  // adjust if you know the exact structure
+ 
   data?: {
     currentPage?: number;
     pageSize?: number;
@@ -25,6 +25,9 @@ export interface FetchProductsResponse {
 export const fetchProducts = async (
   params: FetchProductsParams
 ): Promise<FetchProductsResponse> => {
+  
+  console.log("BASE_URL",BASE_URL);
+  
   const response = await fetch(BASE_URL, {
     method: 'POST',
     headers: {

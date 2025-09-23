@@ -46,14 +46,17 @@ const useProductFetchHook = (initialPage = 1, pageSize = 10) => {
         if (page > 1) setPage((prev) => prev - 1);
     };
 
-    const refetch = () => getProducts(page);
 
     const handleItemPress = (item: any) => {
         console.log('Clicked item:', item);
         navigation.navigate('Product',{ product: item });
     };
 
-    return { data, loading, error, page, totalPages, nextPage, prevPage, refetch, handleItemPress };
+    const handlenavigateToCart: () => void = () => {
+        navigation.navigate('Cart', { product: undefined });
+    };
+
+    return { data, loading, error, page, totalPages, nextPage, prevPage, handleItemPress,handlenavigateToCart };
 };
 
 export default useProductFetchHook;

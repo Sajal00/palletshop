@@ -4,6 +4,7 @@ import {View,Text} from 'react-native';
 import { RootStackParamList } from '../Navigator/AppNavigator';
 //redux
 import { useSelector } from 'react-redux';
+import colors from '../Constant/colors';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 
@@ -21,8 +22,8 @@ const SplashScreen: React.FC<Props> = ({ navigation }) => {
       }, [navigation]);
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: 'black' }}>Splash Screen</Text>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:colors.primary}}>
+          <Text style={{ color: '#fff' }}> Welcome to PalletShop</Text>
         </View>
       );
 }

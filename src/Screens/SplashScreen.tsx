@@ -2,12 +2,15 @@ import React ,{ useEffect }from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {View,Text} from 'react-native';
 import { RootStackParamList } from '../Navigator/AppNavigator';
+//redux
+import { useSelector } from 'react-redux';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 
 
 const SplashScreen: React.FC<Props> = ({ navigation }) => {
-
+  
+  
 
     useEffect(() => {
         const timer = setTimeout(() => {

@@ -1,26 +1,39 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Image, ScrollView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Navigator/AppNavigator';
-//components
-import CustomTextInput from '../Components/CustomTextInput/CustomTextInput';
-import { FontSize } from '../Constant/FontSize';
+import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import { selectUserInfo } from '../Redux/Selector/Selectors';
+import { useNavigation } from '@react-navigation/native';
+
 
 //hooks
 import useGoogleSignIn from '../Hooks/GoogleLogin/useGoogleLoginHook';
+import { useSelector } from 'react-redux';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = () => {
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+    const navigation = useNavigation();
+    const { loading, error, signInWithGoogle } = useGoogleSignIn();
 
-    const { userInfo, loading, error, signInWithGoogle } = useGoogleSignIn();
+    const user = useSelector(selectUserInfo);
+    console.log("user", user);
 
+    useEffect(() => {
+        // only run if user has data
+        if (user && Object.keys(user).length > 0) {
+          const timer = setTimeout(() => {
+            navigation.navigate('Home');
+          }, 2000);
+      
+          return () => clearTimeout(timer); // cleanup
+        }
+      }, [user, navigation]);
 
     return (
+
 
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -31,42 +44,36 @@ const LoginScreen: React.FC<Props> = () => {
                 keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.container}>
-                    <View style={styles.card}>
-                        {/* <CustomTextInput
-                            label="Email"
-                            style={styles.input}
+
+                    <GoogleSigninButton
+                        style={{ width: 192, height: 48 }}
+                        size={GoogleSigninButton.Size.Wide}
+                        color={GoogleSigninButton.Color.Dark}
+                        onPress={signInWithGoogle}
+                        disabled={loading}
+                    />
 
 
-
-                            keyboardType="phone-pad"
-                            maxLength={10}
-                        />
-                        <CustomTextInput
-                            label="Password"
-                            style={styles.input}
-
-
-
-                            keyboardType="phone-pad"
-                            maxLength={10}
-                        /> */}
-                    </View>
-
-                    <Text>Sign In With Google</Text>
-                    <TouchableOpacity onPress={signInWithGoogle}>
-                        <Text>{loading ? 'Signing in...' : 'Google'}</Text>
-                    </TouchableOpacity>
+                    {user ? (
+                        <View style={styles.profileContainer}>
+                            <Text style={styles.loggedInText}>Logged In:</Text>
+                            <Text style={styles.userName}>{user.name}</Text>
+                            {/* Conditionally render the image if photo URL exists */}
+                            {user.photo && (
+                                <Image
+                                    source={{ uri: user.photo }}
+                                    style={styles.profileImage}
+                                />
+                            )}
+                        </View>
+                    ) : (
+                        <Text style={styles.notLoggedInText}>Not Logged In</Text>
+                    )}
 
                 </View>
+
             </ScrollView>
         </KeyboardAvoidingView>
-
-
-
-
-
-
-
     );
 };
 
@@ -93,6 +100,30 @@ const styles = StyleSheet.create({
         elevation: 3,
         gap: 10
     },
+    profileContainer: {
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    loggedInText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    userName: {
+        fontSize: 16,
+        marginTop: 5,
+    },
+    notLoggedInText: {
+        fontSize: 16,
+        marginTop: 20,
+        color: 'gray',
+    },
+    profileImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginTop: 10,
+    },
+
 });
 
 export default LoginScreen;

@@ -1,63 +1,65 @@
 import { useState } from 'react';
-import { GoogleSignin, SignInResponse, statusCodes, User } from '@react-native-google-signin/google-signin';
-import { GOOGLE_WEB_CLIENT_ID } from '@env'; // from your .env
+import { GoogleSignin, statusCodes, User } from '@react-native-google-signin/google-signin';
+import { GOOGLE_WEB_CLIENT_ID } from '@env';
 
-// Initialize Google Signin configuration
+import { useDispatch } from 'react-redux';
+import { setUserInfo } from '../../Redux/Slice/userSlice'; // Redux action creator
+
 GoogleSignin.configure({
-    webClientId: GOOGLE_WEB_CLIENT_ID,
-    offlineAccess: true, // if you want server auth code
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+  offlineAccess: true,
 });
 
-interface UseGoogleSignInReturn {
-    userInfo: User | null;
-    loading: boolean;
-    error: string | null;
-    signInWithGoogle: () => Promise<void>;
-    signOutFromGoogle: () => Promise<void>;
+export default function useGoogleSignIn() {
+  
+  
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const dispatch = useDispatch(); 
+
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const signInResponse = await GoogleSignin.signIn();
+      
+      
+      dispatch(setUserInfo(signInResponse?.data?.user));
+      
+      console.log('User signed in successfully and stored in Redux:', signInResponse?.data?.user); 
+    } catch (err: any) {
+      console.error('Google Sign-In Error:', err);
+
+      if (err.code === statusCodes.SIGN_IN_CANCELLED) {
+        setError('You cancelled the sign-in process.');
+      } else if (err.code === statusCodes.IN_PROGRESS) {
+        setError('Sign-in is already in progress. Please wait.');
+      } else if (err.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        setError('Google Play Services not available or outdated.');
+      } else if (err.code === statusCodes.SIGN_IN_REQUIRED) {
+        setError('Please select a Google account to sign in.');
+      } else {
+        setError('An unknown error occurred. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signOutFromGoogle = async () => {
+    try {
+      await GoogleSignin.signOut();
+      // 3. Dispatch the Redux action to clear user info
+      dispatch(setUserInfo(null));
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  // 4. Return only the state and functions that are still relevant
+  return { loading, error, signInWithGoogle, signOutFromGoogle };
 }
-
-const useGoogleSignIn = (): UseGoogleSignInReturn => {
-    const [userInfo, setUserInfo] = useState<User | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const signInWithGoogle = async () => {
-
-        setLoading(true);
-        setError(null);
-        try {
-
-            await GoogleSignin.hasPlayServices();
-            const user: SignInResponse = await GoogleSignin.signIn();
-            console.log("user",user);
-            
-            // setUserInfo(user);
-
-        } catch (err: any) {
-            if (err.code === statusCodes.SIGN_IN_CANCELLED) {
-                setError('User cancelled the login flow');
-            } else if (err.code === statusCodes.IN_PROGRESS) {
-                setError('Sign in is in progress');
-            } else if (err.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                setError('Google Play Services not available or outdated');
-            } else {
-                setError(err.message);
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const signOutFromGoogle = async () => {
-        try {
-            await GoogleSignin.signOut();
-            setUserInfo(null);
-        } catch (err: any) {
-            setError(err.message);
-        }
-    };
-
-    return { userInfo, loading, error, signInWithGoogle, signOutFromGoogle };
-};
-
-export default useGoogleSignIn;
